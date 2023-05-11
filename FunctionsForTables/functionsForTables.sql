@@ -43,7 +43,7 @@ CREATE OR REPLACE FUNCTION update_data_for_airplanes(
 RETURNS VOID AS
 $BODY$
 	BEGIN
-		UPDATE airplanes 
+		UPDATE airplanes
 			SET seats = _seats, reserved_seats = _reserved_seats, airpale_name = _airpale_name WHERE airplane_id = _airplane_id;
 	END;
 $BODY$
