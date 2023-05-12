@@ -7,6 +7,7 @@ GRANT INSERT, DELETE ON tickets TO default_user;
 GRANT SELECT(login, password, user_id), INSERT, UPDATE, DELETE ON users TO default_user;
 GRANT SELECT ON flights, airplanes TO default_user;
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO default_user;
+GRANT SELECT(ticket_id, flight, passanger_id) ON tickets TO default_user;
 
 /*
 строка подключения через консоль следующая:
