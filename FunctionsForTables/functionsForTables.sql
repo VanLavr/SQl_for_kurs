@@ -142,12 +142,12 @@ CREATE OR REPLACE FUNCTION delete_data_from_users(_user_id INT)
 RETURNS VOID AS 
 $BODY$
 	BEGIN
-		DELETE FROM users WHERE user_id = _user_id;
+		DELETE FROM users CASCADE WHERE user_id = _user_id;
 	END;
 $BODY$
 LANGUAGE plpgsql;
 
-SELECT * FROM delete_data_from_users(3);
+SELECT * FROM delete_data_from_users(7);
 ------------------------------------------- DELETE DATA FROM USERS TABLE -------------------------------------------
 
 
