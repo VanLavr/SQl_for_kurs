@@ -152,3 +152,16 @@ SELECT *
 SELECT ticket_id, flight_id
 	FROM tickets JOIN flights ON 
 		tickets.flight = flights.flight_id;
+
+
+------------------------------------------- TICKET INFO FOR CLIENT -------------------------------------------
+CREATE OR REPLACE VIEW ticket_for_user AS
+SELECT price, code, departure_city, arrival_city, user_id, flights.flight_id FROM tickets JOIN flights
+	ON tickets.flight = flights.flight_id JOIN users
+		ON tickets.passanger_id = users.user_id;
+
+SELECT price, code, departure_city, arrival_city, flight_id FROM ticket_for_user WHERE user_id = 7;
+
+
+
+
