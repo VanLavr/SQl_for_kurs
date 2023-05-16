@@ -13,13 +13,14 @@ RETURNS TABLE (
 	_departure_city VARCHAR(30),
 	_arrival_city VARCHAR(30),
 	_airpale_name VARCHAR(30),
-	is_full BOOLEAN
+	is_full BOOLEAN,
+	_flight_id INT
 ) AS
 $BODY$
 	BEGIN
 		RETURN QUERY 
 			SELECT departure_date, arrival_date, departure_city, arrival_city, airpale_name,
-				CASE WHEN airplanes.seats - airplanes.reserved_seats = 0 THEN TRUE ELSE FALSE END AS is_full 
+				CASE WHEN airplanes.seats - airplanes.reserved_seats = 0 THEN TRUE ELSE FALSE END AS is_full, flights.flight_id
 					FROM flights JOIN airplanes ON airplanes.airplane_id = flights.airplane_id;
 	END;
 $BODY$
