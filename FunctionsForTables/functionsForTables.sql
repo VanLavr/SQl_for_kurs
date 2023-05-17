@@ -78,6 +78,20 @@ $BODY$
 $BODY$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION data_insertion_for_tickets_func(
+	_price FLOAT,
+	_flight INT,
+	_passanger_id INT
+)
+RETURNS VOID AS 
+$BODY$
+	BEGIN
+		INSERT INTO tickets(price, flight, passanger_id)
+			VALUES (_price, _flight, _passanger_id);
+	END;
+$BODY$
+LANGUAGE plpgsql;
+
 CALL data_insertion_for_tickets(1210.50, 1, 1);
 CALL data_insertion_for_tickets(990.25, 2, 2);
 CALL data_insertion_for_tickets(500.0, 3, 2);
