@@ -1,31 +1,32 @@
 CREATE OR REPLACE FUNCTION data_insertion_for_airplanes(
 	_seats INT,
 	_reserved_seats INT,
-	_airpale_name VARCHAR(30)
+	_airpale_name VARCHAR(30),
+	_port_id TEXT
 )
 RETURNS VOID AS 
 $BODY$
 	BEGIN
-		INSERT INTO airplanes(seats, reserved_seats, airpale_name)
-			VALUES (_seats, _reserved_seats, _airpale_name);
+		INSERT INTO airplanes(seats, reserved_seats, airpale_name, port_id)
+			VALUES (_seats, _reserved_seats, _airpale_name, _port_id);
 	END;
 $BODY$
 LANGUAGE plpgsql;
 
-SELECT * FROM data_insertion_for_airplanes(853, 511, 'Airbus A380');
-SELECT * FROM data_insertion_for_airplanes(110, 27, 'Boeing 737');
-SELECT * FROM data_insertion_for_airplanes(440, 150, 'Airbus A350');
-SELECT * FROM data_insertion_for_airplanes(375, 11, 'Airbus A340');
-SELECT * FROM data_insertion_for_airplanes(467, 327, 'Boeing 747');
-SELECT * FROM data_insertion_for_airplanes(10, 3, 'AN-2P');
+SELECT * FROM data_insertion_for_airplanes(853, 511, 'Airbus A380', 'VY12');
+SELECT * FROM data_insertion_for_airplanes(110, 27, 'Boeing 737', 'IO98');
+SELECT * FROM data_insertion_for_airplanes(440, 150, 'Airbus A350', 'TY34');
+SELECT * FROM data_insertion_for_airplanes(375, 11, 'Airbus A340', 'ZX78');
+SELECT * FROM data_insertion_for_airplanes(467, 327, 'Boeing 747', 'ES83');
+SELECT * FROM data_insertion_for_airplanes(10, 3, 'AN-2P', 'ML03');
 ------------------------------------------- ADD DATA TO AIRPLANES TABLE -------------------------------------------
 
 
-CREATE OR REPLACE FUNCTION delete_data_from_airplanes(_airplane_id INT)
+CREATE OR REPLACE FUNCTION delete_data_from_airplanes(_port_id TEXT)
 RETURNS VOID AS
 $BODY$
 	BEGIN
-		DELETE FROM airplanes WHERE airplane_id = _airplane_id;
+		DELETE FROM airplanes WHERE port_id = _port_id;
 	END;
 $BODY$
 LANGUAGE plpgsql;
@@ -35,7 +36,7 @@ SELECT * FROM delete_data_from_airplanes(6);
 
 
 CREATE OR REPLACE FUNCTION update_data_for_airplanes(
-	_airplane_id INT,
+	_port_id TEXT,
 	_seats INT,
 	_reserved_seats INT,
 	_airpale_name VARCHAR(30)
@@ -44,7 +45,7 @@ RETURNS VOID AS
 $BODY$
 	BEGIN
 		UPDATE airplanes
-			SET seats = _seats, reserved_seats = _reserved_seats, airpale_name = _airpale_name WHERE airplane_id = _airplane_id;
+			SET seats = _seats, reserved_seats = _reserved_seats, airpale_name = _airpale_name WHERE port_id = _port_id;
 	END;
 $BODY$
 LANGUAGE plpgsql;
@@ -146,9 +147,9 @@ $BODY$
 $BODY$
 LANGUAGE plpgsql;
 
-SELECT * FROM add_user('Nikita', 'qwerty228');
-SELECT * FROM add_user('Nikitaaaaa', 'qwerty228');
-SELECT * FROM add_user('Ivan', 'POIUYT322');
+SELECT * FROM add_user('Nikita', '1');
+SELECT * FROM add_user('Kolya', '2');
+SELECT * FROM add_user('Ivan', '3');
 ------------------------------------------- ADD DATA TO USERS TABLE -------------------------------------------
 
 
@@ -188,23 +189,28 @@ CREATE OR REPLACE FUNCTION add_flight(
 	_arrival_date TIMESTAMP,
 	_departure_city VARCHAR(30),
 	_arrival_city VARCHAR(30),
-	_id INT
+	_port_id TEXT
 )
 RETURNS VOID AS
 $BODY$
+	DECLARE
+		_id INT;
+
 	BEGIN
+		SELECT airplane_id INTO _id FROM airplanes WHERE _port_id = port_id;
+	
 		INSERT INTO flights(departure_date, arrival_date, departure_city, arrival_city, airplane_id)
 			VALUES (_departure_date, _arrival_date, _departure_city, _arrival_city, _id);
 	END;
 $BODY$
 LANGUAGE plpgsql;
 
-SELECT * FROM add_flight('2023-06-04 20:40:00', '2023-06-04 23:55:00', 'Amsterdam', 'Moscow', 5);
-SELECT * FROM add_flight('2023-06-11 07:25:00', '2023-06-11 11:00:00', 'Moscow', 'Paris', 2);
-SELECT * FROM add_flight('2023-11-28 15:30:00', '2023-11-28 19:15:00', 'London', 'Walles', 4);
-SELECT * FROM add_flight('2023-11-18 12:10:00', '2023-11-18 15:55:00', 'Kishenev', 'London', 7);
-SELECT * FROM add_flight('2023-12-23 10:00:00', '2023-12-24 12:30:00', 'Singapour', 'New-York', 1);
-SELECT * FROM add_flight('2023-12-28 17:05:00', '2023-12-29 16:20:00', 'St. Petersberg', 'Santafe', 3);
+SELECT * FROM add_flight('2023-06-04 20:40:00', '2023-06-04 23:55:00', 'Amsterdam', 'Moscow', 'ES83');
+SELECT * FROM add_flight('2023-06-11 07:25:00', '2023-06-11 11:00:00', 'Moscow', 'Paris', 'IO98');
+SELECT * FROM add_flight('2023-11-28 15:30:00', '2023-11-28 19:15:00', 'London', 'Walles', 'ZX78');
+SELECT * FROM add_flight('2023-11-18 12:10:00', '2023-11-18 15:55:00', 'Kishenev', 'London', 'ML03');
+SELECT * FROM add_flight('2023-12-23 10:00:00', '2023-12-24 12:30:00', 'Singapour', 'New-York', 'VY12');
+SELECT * FROM add_flight('2023-12-28 17:05:00', '2023-12-29 16:20:00', 'St. Petersberg', 'Santafe', 'TY34');
 ------------------------------------------- ADD DATA TO FLIGHTS TABLE -------------------------------------------
 
 

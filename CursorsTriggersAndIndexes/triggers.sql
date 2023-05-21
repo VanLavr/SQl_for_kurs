@@ -19,3 +19,4 @@ CREATE OR REPLACE TRIGGER "generate_code_trigger"
 		EXECUTE PROCEDURE "generate_code"();
 
 DROP TRIGGER generate_code_trigger ON tickets;
+

@@ -30,7 +30,8 @@ CREATE TABLE airplanes(
 	airplane_id SERIAL PRIMARY KEY,
 	airpale_name VARCHAR(30),
 	seats INT,
-	reserved_seats INT
+	reserved_seats INT,
+	port_id TEXT
 );
 SELECT * FROM airplanes;
 

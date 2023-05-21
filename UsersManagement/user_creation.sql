@@ -10,6 +10,13 @@ GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO default_user;
 GRANT SELECT(ticket_id, flight, passanger_id) ON tickets TO default_user;
 GRANT SELECT ON ticket_for_user TO default_user;
 
+CREATE USER administrator WITH PASSWORD 'qwerty';
+GRANT USAGE, SELECT, UPDATE ON ALL SEQUENCES IN SCHEMA public TO Administrator;
+GRANT SELECT, INSERT, UPDATE, DELETE ON tickets TO Administrator;
+GRANT SELECT, INSERT, UPDATE, DELETE ON users TO Administrator;
+GRANT SELECT, INSERT, UPDATE, DELETE ON flights TO Administrator;
+GRANT SELECT, INSERT, UPDATE, DELETE ON airplanes TO Administrator;
+
 /*
 строка подключения через консоль следующая:
 psql -U postgres (затем пароль)

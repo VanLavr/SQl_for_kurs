@@ -57,6 +57,35 @@ SELECT * FROM tickets WHERE price > (
 	SELECT AVG(price) FROM tickets
 );
 
+-- CORRELATED 1
+SELECT AI.airpale_name, AI.reserved_seats, AI.port_id FROM airplanes AI WHERE EXISTS (
+	SELECT port_id FROM flights f WHERE f.airplane_id = AI.airplane_id
+);
+
+-- CORRELATED 2
+SELECT (SELECT login FROM users U WHERE U.user_id = TC.passanger_id), price FROM tickets TC;
+
+-- CORRELATED 3
+CREATE OR REPLACE FUNCTION flights_for_admin()
+RETURNS TABLE (
+	_departure_date TIMESTAMP,
+	_arrival_date TIMESTAMP,
+	_departure_city VARCHAR(30),
+	_arrival_city VARCHAR(30),
+	_airplane_port TEXT
+) AS
+$BODY$
+	BEGIN
+		RETURN QUERY 
+			SELECT departure_date, arrival_date, departure_city, arrival_city, (
+				SELECT AI.port_id FROM airplanes AI WHERE AI.airplane_id = FL.airplane_id
+			) FROM flights FL;
+	END;
+$BODY$
+LANGUAGE plpgsql;
+
+SELECT * FROM flights_for_admin();
+
 /* 
    ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 это будет использоваться для выявления популярного рейса во вкладке "популярные направления" 
@@ -157,12 +186,20 @@ SELECT ticket_id, flight_id
 
 ------------------------------------------- TICKET INFO FOR CLIENT -------------------------------------------
 CREATE OR REPLACE VIEW ticket_for_user AS
+SELECT price, code, departure_city, arrival_city, flight_id, user_id FROM tickets JOIN flights
+	ON tickets.flight = flights.flight_id JOIN users 
+		ON tickets.passanger_id = users.user_id;
+
+SELECT * FROM ticket_for_user;
+
+UPDATE ticket_for_user
+	SET price = 1000 WHERE price = 500;
+
+
+
+
+------------------------------------------- TICKET INFO FOR CLIENT -------------------------------------------
+CREATE OR REPLACE VIEW ticket_for_user AS
 SELECT price, code, departure_city, arrival_city, user_id, flights.flight_id FROM tickets JOIN flights
 	ON tickets.flight = flights.flight_id JOIN users
 		ON tickets.passanger_id = users.user_id;
-
-SELECT price, code, departure_city, arrival_city, flight_id FROM ticket_for_user WHERE user_id = 7;
-
-
-
-
