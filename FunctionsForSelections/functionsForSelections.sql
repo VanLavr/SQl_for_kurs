@@ -72,14 +72,15 @@ RETURNS TABLE (
 	_arrival_date TIMESTAMP,
 	_departure_city VARCHAR(30),
 	_arrival_city VARCHAR(30),
-	_airplane_port TEXT
+	_airplane_port TEXT,
+	_flight_id INT
 ) AS
 $BODY$
 	BEGIN
 		RETURN QUERY 
 			SELECT departure_date, arrival_date, departure_city, arrival_city, (
 				SELECT AI.port_id FROM airplanes AI WHERE AI.airplane_id = FL.airplane_id
-			) FROM flights FL;
+			), flight_id FROM flights FL;
 	END;
 $BODY$
 LANGUAGE plpgsql;
