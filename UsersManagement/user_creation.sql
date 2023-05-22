@@ -16,6 +16,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON tickets TO Administrator;
 GRANT SELECT, INSERT, UPDATE, DELETE ON users TO Administrator;
 GRANT SELECT, INSERT, UPDATE, DELETE ON flights TO Administrator;
 GRANT SELECT, INSERT, UPDATE, DELETE ON airplanes TO Administrator;
+GRANT SELECT, INSERT, UPDATE, DELETE ON ticket_for_user TO Administrator;
 
 /*
 строка подключения через консоль следующая:

@@ -187,7 +187,7 @@ SELECT ticket_id, flight_id
 
 ------------------------------------------- TICKET INFO FOR CLIENT -------------------------------------------
 CREATE OR REPLACE VIEW ticket_for_user AS
-SELECT price, code, departure_city, arrival_city, flight_id, user_id FROM tickets JOIN flights
+SELECT price, code, departure_city, arrival_city, flight_id, user_id, login, ticket_id FROM tickets JOIN flights
 	ON tickets.flight = flights.flight_id JOIN users 
 		ON tickets.passanger_id = users.user_id;
 
@@ -196,6 +196,8 @@ SELECT * FROM ticket_for_user;
 UPDATE ticket_for_user
 	SET price = 1000 WHERE price = 500;
 
+UPDATE ticket_for_user
+	SET price = 150 WHERE ticket_id = 13;
 
 
 

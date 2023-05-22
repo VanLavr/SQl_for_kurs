@@ -6,7 +6,7 @@ RETURNS VOID AS
 $BODY$
 	BEGIN
 		UPDATE tickets
-			SET price = newTable.price WHERE price = oldTable.price;
+			SET price = newTable.price WHERE ticket_id = oldTable.ticket_id;
 	END;
 $BODY$
 LANGUAGE plpgsql;
