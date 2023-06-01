@@ -65,6 +65,9 @@ SELECT AI.airpale_name, AI.reserved_seats, AI.port_id FROM airplanes AI WHERE EX
 -- CORRELATED 2
 SELECT (SELECT login FROM users U WHERE U.user_id = TC.passanger_id), price FROM tickets TC;
 
+-- CORRELATED 4
+-- SELECT * FROM flights FL JOIN (SELECT * FROM airplanes AI WHERE AI.airplane_id = FL.airplane_id) AS AI ON AI.airplane_id = FL.airplane_id;
+
 -- CORRELATED 3
 CREATE OR REPLACE FUNCTION flights_for_admin()
 RETURNS TABLE (
