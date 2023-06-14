@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="./styles/style.css" rel="stylesheet">
+    <title>Test</title>
+</head>
+<body class="body">
+    <div class="containerBtns">
+        <input type="submit" class="button-3" role="button" id="btnClearSearch" value="Exit" onclick="location.href='./index.html'">
+        <input type="submit" class="button-3" role="button" id="btnSearch" value="Home" onclick="location.href='./Home.html'">
+        <input type="submit" class="button-3" role="button" id="btnClearSearch" value="Flights" onclick="location.href='./Flights.html'">
+        <input type="submit" class="button-3" role="button" id="btnClearSearch" value="Popular" onclick="location.href='./Popular.html'">
+        <input type="submit" class="button-3" role="button" id="btnClearSearch" value="Fast" onclick="location.href='./Fast.html'">
+        <input type="submit" class="button-3" role="button" id="btnClearSearch" value="Info" onclick="location.href='./Info.html'">
+        <input type="submit" class="button-3" role="button" id="btnClearSearch" value="Departures" onclick="location.href='./Departures.html'">
+    </div>
+    <div style="padding-left: 50px; padding-top: 70px; padding-bottom: 70px;">
+        <p><b>Info</b></p>
+
+        <table class="styled-table">
+          <thead>
+              <tr>
+                  <th>Airplane name</th>
+              </tr>
+          </thead>
+          <tbody id="bodyOfTheTableInfo">
+          </tbody>
+        </table>
+
+      <p><b>Have a nice trip!</b></p>
+      <p style="padding-top: 50px;">
+          Thise is the info about the bigest airplanes. <br>
+          Here you can see the airplanes names <br>
+          in table.
+      </p>
+
+      <script>
+          fetch("http://localhost:8080/api/info")
+          .then((res) => {
+              return res.json();
+          })
+          .then((data) => {
+              console.log(data);
+              let indicator = "";
+              let i = 0;
+              let markup;
+              data.forEach((row) => {
+                  markup = `
+                      <tr>
+                          <td>${row.airpale_name}</td>
+                      </tr>
+                  `;
+
+                  document.getElementById("bodyOfTheTableInfo").insertAdjacentHTML("beforeend", markup);
+              });
+          });
+      </script>
+
+    </div>
+</body>
+
+
+<footer class="footer">
+    <div class="footer__addr">
+          
+      <h2>Contact</h2>
+      
+      <address>
+        140103, Russia, Ramenskoe<br>
+            
+        <a class="footer__btn" href="mailto:lavr.i-n@mail.ru">Email me</a>
+      </address>
+    </div>
+    
+    <ul class="footer__nav">
+      <li class="nav__item">
+        <h2 class="nav__title">Media</h2>
+  
+        <ul class="nav__ul">
+          <li>
+            <a href="https://vk.com/livcey">Me vk</a>
+          </li>
+  
+          <li>
+            <a href="https://t.me/laurus_nobilis69">Me tg</a>
+          </li>
+        </ul>
+      </li>
+      
+      <li class="nav__item nav__item--extra">
+        <h2 class="nav__title">Kursovaya</h2>
+      </li>
+      
+      <li class="nav__item">
+        <h2 class="nav__title">Legal</h2>
+        
+        <ul class="nav__ul">
+          <li>
+            <a href="#">Privacy Policy</a>
+          </li>
+          
+          <li>
+            <a href="#">Terms of Use</a>
+          </li>
+          
+          <li>
+            <a href="#">Sitemap</a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+    
+    <div class="legal">
+      <p>&copy; 2023 Lavrushko inc.</p>
+      
+      <div class="legal__links">
+        <span>Made with <span class="heart">♥</span> remotely from Ramenskoe</span>
+      </div>
+    </div>
+  </footer>
+
+</html>

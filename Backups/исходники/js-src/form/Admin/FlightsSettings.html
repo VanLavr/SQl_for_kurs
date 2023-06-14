@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../styles/style.css" rel="stylesheet">
+    <link href="../styles/stylesForAdmin.css" rel="stylesheet">
+    <title>Flights Settings</title>
+</head>
+<body>
+    <div class="containerBtns">
+        <input type="submit" class="button-3" role="button" id="btnClearSearch" value="Exit" onclick="location.href='../index.html'">
+        <input type="submit" class="button-3" role="button" id="btnSearch" value="Airplanes &#9965" onclick="location.href='./AirplanesSettings.html'">
+        <input type="submit" class="button-3" role="button" id="btnClearSearch" value="Flights &#9965" onclick="location.href='./FlightsSettings.html'">
+        <input type="submit" class="button-3" role="button" id="btnClearSearch" value="Tickets &#9965" onclick="location.href='./TicketsSettings.html'">
+        <input type="submit" class="button-3" role="button" id="btnClearSearch" value="BURJUI" onclick="location.href='./BURJUI.html'">
+        <input type="submit" class="button-3" role="button" id="btnClearSearch" value="Statistics" onclick="location.href='./Stats.html'">
+        <input type="submit" class="button-3" role="button" id="btnClearSearch" value="Ticket Conc" onclick="location.href='./Concurrency.html'">
+        <!-- <input type="submit" class="button-3" role="button" id="btnClearSearch" value="Compare" onclick="location.href='./Compare.html'"> -->
+        <input type="submit" class="button-3" role="button" id="btnClearSearch" value="Clients" onclick="location.href='./Clients.html'">
+    </div>
+
+    <div style="display: inline-flex;">
+        <div class="InputsAirpCont">
+            <input type="text" placeholder="Departure date" class="InputsAirp" id="DepDate">
+            <input type="text" placeholder="Arrival date" class="InputsAirp" id="ArrDate">
+            <input type="text" placeholder="Departure city" class="InputsAirp" id="DepCity">
+            <input type="text" placeholder="Arrival city" class="InputsAirp" id="ArrCity">
+            <input type="text" placeholder="Airplane port id" class="InputsAirp" id="AirpName">
+        </div>
+        <div class="ButtonsForAirpCont">
+            <button class="ButtonsForAirp" id="BtnCreate">Create</button>
+            <!-- <button class="ButtonsForAirp" id="BtnDelete">Delete</button> -->
+            <!-- <button class="ButtonsForAirp">Update</button> -->
+        </div>
+    </div>
+
+    <div style="padding-left: 350px; padding-top: 50px;">
+        <table class="styled-table" id="flightsTable">
+            <thead>
+                <tr>
+                    <th>Departure date</th>
+                    <th>Arrival date</th>
+                    <th>Departure city</th>
+                    <th>Arrival city</th>
+                    <th>Airplane port id</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody id="bodyOfTheTable">
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        (async () => {
+            const AllFlightsResponse = await fetch("http://localhost:8080/api/flightsSettingsTable");
+            let resp = await AllFlightsResponse.json();
+            console.log(resp);
+            let markup;
+            let i = 0;
+
+            resp.forEach(row => {
+                markup = `
+                    <tr>
+                        <td>${row._departure_date}</td>    
+                        <td>${row._arrival_date}</td>    
+                        <td>${row._departure_city}</td>    
+                        <td>${row._arrival_city}</td>    
+                        <td>${row._airplane_port}</td>
+                        <td> <button id="${i}" class="passTheTicketButton">Del</button> </td> 
+                    </tr>
+                `;
+
+                document.getElementById("bodyOfTheTable").insertAdjacentHTML("beforeend", markup);
+
+                const btnDel = document.getElementById(`${i}`);
+                    if (btnDel) {
+                        console.log("button created");
+                        btnDel.addEventListener("click", (event) => {
+                            let reqBody = `{"_flight_id" : ${row._flight_id}}`;
+                            console.log(reqBody);
+                            (async () => {
+                                const buyData = await Del(reqBody);
+                                let mes = await buyData.json();
+                                if (mes.message === "flight deleted") {
+                                    alert("flight deleted!");
+                                    window.location.reload();
+                                } else if (mes.message === "no such data") {
+                                    alert("no such data!");
+                                } else {
+                                    alert("Oops... Error was occured. Please, try again later...");
+                                }
+                            })();
+                        });
+                        console.log("eventListener added");
+                    }
+                
+                i++;
+            });
+        })();
+
+        async function Del(reqBody) {
+            try {
+                const response = fetch("http://localhost:8080/api/deleteFlight", {
+                        method: "POST",
+                        cache: "no-cache",
+                        credentials: "same-origin", 
+                        headers: {
+                            "Content-Type": "application/json",
+                        }, 
+                        body: reqBody,
+                    }
+                );
+
+                return response;
+                } catch (error) {
+                    console.log(error);
+                }
+        }
+
+        let inputDataDepDate = document.getElementById("DepDate");
+        let inputDataArrDate = document.getElementById("ArrDate");
+        let inputDataDepCity = document.getElementById("DepCity");
+        let inputDataArrCity = document.getElementById("ArrCity");
+        let inputDataAirpName = document.getElementById("AirpName");
+        let DepartureDateData;
+        let ArrivalDateData;
+        let DepartureCityData;
+        let ArrivalCityData;
+        let AiplaneNameData;
+
+        const buttnCreate = document.getElementById("BtnCreate");
+        if (buttnCreate) {
+            buttnCreate.addEventListener("click", event => {
+
+                DepartureDateData = inputDataDepDateFunc(event);
+                ArrivalDateData = inputDataArrDateFunc(event);
+                DepartureCityData = inputDataDepCityFunc(event);
+                ArrivalCityData = inputDataArrCityFunc(event);
+                AiplaneNameData = inputDataAirpNameFunc(event);
+                
+                const reqBody = `
+                    {
+                        "_departure_date" : "${DepartureDateData}",
+                        "_arrival_date" : "${ArrivalDateData}",
+                        "_departure_city" : "${DepartureCityData}",
+                        "_arrival_city" : "${ArrivalCityData}",
+                        "_id" : "${AiplaneNameData}"
+                    }
+                `;
+                
+                console.log(reqBody);
+
+                (async () => {
+                    const createData = await createFlight(reqBody);
+                    let resp = await createData.json();
+                    console.log(resp);
+                    if (resp.message === "flight added") {
+                        alert("flight added");
+                        window.location.reload();
+                    } else {
+                        alert("Error occured, please, try again later");
+                    }
+                })();
+            });
+        }
+
+        const buttnDelete = document.getElementById("BtnDelete");
+        if (buttnDelete) {
+            buttnDelete.addEventListener("click", event => {
+
+                DepartureDateData = inputDataDepDateFunc(event);
+                ArrivalDateData = inputDataArrDateFunc(event);
+                DepartureCityData = inputDataDepCityFunc(event);
+                ArrivalCityData = inputDataArrCityFunc(event);
+                AiplaneNameData = inputDataAirpNameFunc(event);
+                
+                const reqBody = `
+                    {
+                        "_departure_date" : "${DepartureDateData}",
+                        "_arrival_date" : "${ArrivalDateData}",
+                        "_departure_city" : "${DepartureCityData}",
+                        "_arrival_city" : "${ArrivalCityData}",
+                        "_id" : "${AiplaneNameData}"
+                    }
+                `;
+                
+                console.log(reqBody);
+
+                (async () => {
+                    const createData = await deleteFlight(reqBody);
+                    let resp = await createData.json();
+                    console.log(resp);
+                    if (resp.message === "flight added") {
+                        alert("flight added");
+                    } else {
+                        alert("Error occured, please, try again later");
+                    }
+                })();
+            });
+        }
+
+        function inputDataDepDateFunc(event) {
+            event.preventDefault();
+            if (inputDataDepDate) {
+                const inputDataDepDateValue = inputDataDepDate.value;
+                return inputDataDepDateValue;
+            } else {
+                return null;
+            }
+        }
+
+        function inputDataArrDateFunc(event) {
+            event.preventDefault();
+            if (inputDataArrDate) {
+                const inputDataArrDateValue = inputDataArrDate.value;
+                return inputDataArrDateValue;
+            } else {
+                return null;
+            }
+        }
+
+        function inputDataDepCityFunc(event) {
+            event.preventDefault();
+            if (inputDataDepCity) {
+                const inputDataDepCityValue = inputDataDepCity.value;
+                return inputDataDepCityValue;
+            } else {
+                return null;
+            }
+        }
+
+        function inputDataArrCityFunc(event) {
+            event.preventDefault();
+            if (inputDataArrCity) {
+                const inputDataArrCityValue = inputDataArrCity.value;
+                return inputDataArrCityValue;
+            } else {
+                return null;
+            }
+        }
+
+        function inputDataAirpNameFunc(event) {
+            event.preventDefault();
+            if (inputDataAirpName) {
+                const inputDataAirpNameValue = inputDataAirpName.value;
+                return inputDataAirpNameValue;
+            } else {
+                return null;
+            }
+        }
+
+        async function createFlight(reqBody) {
+            console.log("createFlight called");
+            try {
+                const response = fetch("http://localhost:8080/api/createFlight", {
+                    method: "POST",
+                    cache: "no-cache",
+                    credentials: "same-origin", 
+                    headers: {
+                        "Content-Type": "application/json",
+                    }, 
+                    body: reqBody,
+                });
+
+                return response;
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        async function deleteFlight(reqBody) {
+            console.log("showInfo called");
+            try {
+                const response = fetch("http://localhost:8080/api/deleteFlight", {
+                    method: "POST",
+                    cache: "no-cache",
+                    credentials: "same-origin",
+                    headers: {
+                        "Content-Type": "application/json",
+                    }, 
+                    body: reqBody,
+                });
+
+                return response;
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    </script>
+
+</body>
+</html>

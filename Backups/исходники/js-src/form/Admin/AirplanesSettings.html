@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../styles/style.css" rel="stylesheet">
+    <link href="../styles/stylesForAdmin.css" rel="stylesheet">
+    <title>Airplanes Settings</title>
+</head>
+<body>
+    <div class="containerBtns">
+        <input type="submit" class="button-3" role="button" id="btnClearSearch" value="Exit" onclick="location.href='../index.html'">
+        <input type="submit" class="button-3" role="button" id="btnSearch" value="Airplanes &#9965" onclick="location.href='./AirplanesSettings.html'">
+        <input type="submit" class="button-3" role="button" id="btnClearSearch" value="Flights &#9965" onclick="location.href='./FlightsSettings.html'">
+        <input type="submit" class="button-3" role="button" id="btnClearSearch" value="Tickets &#9965" onclick="location.href='./TicketsSettings.html'">
+        <input type="submit" class="button-3" role="button" id="btnClearSearch" value="BURJUI" onclick="location.href='./BURJUI.html'">
+        <input type="submit" class="button-3" role="button" id="btnClearSearch" value="Statistics" onclick="location.href='./Stats.html'">
+        <input type="submit" class="button-3" role="button" id="btnClearSearch" value="Ticket Conc" onclick="location.href='./Concurrency.html'">
+        <!-- <input type="submit" class="button-3" role="button" id="btnClearSearch" value="Compare" onclick="location.href='./Compare.html'"> -->
+        <input type="submit" class="button-3" role="button" id="btnClearSearch" value="Clients" onclick="location.href='./Clients.html'">
+    </div>
+
+    <div style="display: inline-flex;">
+        <div class="InputsAirpCont">
+            <input type="text" placeholder="Name of airplane" class="InputsAirp" id="name">
+            <input type="text" placeholder="Seats" class="InputsAirp" id="seats">
+            <input type="text" placeholder="Reserved seats" class="InputsAirp" id="resseats">
+            <input type="text" placeholder="Port id" class="InputsAirp" id="port_id">
+        </div>
+        <div class="ButtonsForAirpCont">
+            <button class="ButtonsForAirp" id="create">Create</button>
+            <button class="ButtonsForAirp" id="delete">Delete</button>
+            <button class="ButtonsForAirp" id="update">Update</button>
+        </div>
+    </div>
+
+    <script>
+        let inputDataName = document.getElementById("name");
+        let inputDataSeats = document.getElementById("seats");
+        let inputDataResSeats = document.getElementById("resseats");
+        let inputDataPort = document.getElementById("port_id");
+
+        const buttnCreate = document.getElementById("create");
+        const buttnDelete = document.getElementById("delete");
+        const buttnUpdate = document.getElementById("update");
+
+        if (buttnCreate) {
+            buttnCreate.addEventListener("click", (event) => {
+                let seats = getDataFromSeats(event);
+                let reserved_seats = getDataFromReservedSeats(event);
+                let airpale_name = getDataFromName(event);
+                let port_id = getDataFromPort(event);
+                const reqBody = `
+                    {
+                        "seats" : ${seats},
+                        "reserved_seats" : ${reserved_seats},
+                        "airpale_name" : "${airpale_name}",
+                        "port_id" : "${port_id}"
+                    }
+                `;
+                console.log(reqBody);
+                (async () => {
+                    const showData = await createAirpale(reqBody);
+                    let resp = await showData.json();
+                    console.log(resp);
+                    if (resp.message === "airplane added") {
+                        alert("Airplane added!");
+                    } else {
+                        alert("Error occured, try again later!");
+                    }
+                })();
+            });
+        }
+
+        if (buttnDelete) {
+            buttnDelete.addEventListener("click", (event) => {
+                let port_id = getDataFromPort(event);
+                const reqBody = `
+                    {
+                        "port_id" : "${port_id}"
+                    }
+                `;
+                console.log(reqBody);
+                (async () => {
+                    const showData = await deleteAirpale(reqBody);
+                    let resp = await showData.json();
+                    console.log(resp);
+                    if (resp.message === "airplane deleted") {
+                        alert("Airplane deleted!");
+                    } else {
+                        alert("Error occured, try again later!");
+                    }
+                })();
+            });
+        }
+
+        if (buttnUpdate) {
+            buttnUpdate.addEventListener("click", (event) => {
+                let seats = getDataFromSeats(event);
+                let reserved_seats = getDataFromReservedSeats(event);
+                let airpale_name = getDataFromName(event);
+                let port_id = getDataFromPort(event);
+                const reqBody = `
+                    {
+                        "seats" : ${seats},
+                        "reserved_seats" : ${reserved_seats},
+                        "airpale_name" : "${airpale_name}",
+                        "port_id" : "${port_id}"
+                    }
+                `;
+                console.log(reqBody);
+                (async () => {
+                    const showData = await updateAirpale(reqBody);
+                    let resp = await showData.json();
+                    console.log(resp);
+                    if (resp.message === "airplane changed") {
+                        alert("Airplane changed!");
+                    } else {
+                        alert("Error occured, try again later!");
+                    }
+                })();
+            });
+        }
+
+        function getDataFromName(event) {
+            event.preventDefault();
+            if (inputDataName) {
+                const inputDataNameValue = inputDataName.value;
+                return inputDataNameValue;
+            } else {
+                console.log("null");
+            }
+        }
+
+        function getDataFromPort(event) {
+            event.preventDefault();
+            if (inputDataPort) {
+                const inputDataPortValue = inputDataPort.value;
+                return inputDataPortValue;
+            } else {
+                console.log("null");
+            }
+        }
+
+        function getDataFromSeats(event) {
+            event.preventDefault();
+            if (inputDataSeats) {
+                const inputDataSeatsValue = inputDataSeats.value;
+                return inputDataSeatsValue;
+            } else {
+                console.log("null");
+            }
+        }
+
+        function getDataFromReservedSeats(event) {
+            event.preventDefault();
+            if (inputDataResSeats) {
+                const inputDataResSeatsValue = inputDataResSeats.value;
+                return inputDataResSeatsValue;
+            } else {
+                console.log("null");
+            }
+        }
+
+        async function createAirpale(reqBody) {
+            console.log("createAirpale called");
+            try {
+                const response = fetch("http://localhost:8080/api/createAirplane", {
+                    method: "POST",
+                    cache: "no-cache",
+                    credentials: "same-origin", 
+                    headers: {
+                        "Content-Type": "application/json",
+                    }, 
+                    body: reqBody,
+                });
+
+                return response;
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        async function deleteAirpale(reqBody) {
+            console.log("deleteAirpale called");
+            try {
+                const response = fetch("http://localhost:8080/api/deleteAirplane", {
+                    method: "POST",
+                    cache: "no-cache",
+                    credentials: "same-origin", 
+                    headers: {
+                        "Content-Type": "application/json",
+                    }, 
+                    body: reqBody,
+                });
+
+                return response;
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        async function updateAirpale(reqBody) {
+            console.log("updateAirpale called");
+            try {
+                const response = fetch("http://localhost:8080/api/changeAirplane", {
+                    method: "POST",
+                    cache: "no-cache",
+                    credentials: "same-origin", 
+                    headers: {
+                        "Content-Type": "application/json",
+                    }, 
+                    body: reqBody,
+                });
+
+                return response;
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    </script>
+
+</body>
+</html>

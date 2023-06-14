@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="./styles/style.css" rel="stylesheet">
+    <script src="./scripts/deleteAndChange.js" defer></script>
+    <title>Home</title>
+</head>
+<body class="body">
+    <div class="containerBtns">
+        <input type="submit" class="button-3" role="button" id="btnClearSearch" value="Exit" onclick="location.href='./index.html'">
+        <input type="submit" class="button-3" role="button" id="btnSearch" value="Home" onclick="location.href='./Home.html'">
+        <input type="submit" class="button-3" role="button" id="btnClearSearch" value="Flights" onclick="location.href='./Flights.html'">
+        <input type="submit" class="button-3" role="button" id="btnClearSearch" value="Popular" onclick="location.href='./Popular.html'">
+        <input type="submit" class="button-3" role="button" id="btnClearSearch" value="Fast" onclick="location.href='./Fast.html'">
+        <input type="submit" class="button-3" role="button" id="btnClearSearch" value="Info" onclick="location.href='./Info.html'">
+        <input type="submit" class="button-3" role="button" id="btnClearSearch" value="Departures" onclick="location.href='./Departures.html'">
+    </div>
+    <div class="userHome">
+        <p>User:</p>
+        <div class="username" id="NAME"></div>
+
+        <script>
+            fetch("http://localhost:8080/api/session")
+            .then((res) => {
+                return res.json();
+            })
+            .then((data) => {
+                const markup = `<p><b>${data}<b/></p>`;
+                document.getElementById("NAME").insertAdjacentHTML("beforeend", markup);
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+        </script>
+
+        <div>
+            <p style="padding-top: 100px">Tickets:</p>
+            <div class="ticket">
+                <ul id="tickets_of_this_user" class="listOfTickets">
+
+                </ul>
+            </div>
+        </div>
+
+        <script>
+            let arrayOfFlights = [];
+            let i = 0;
+
+            fetch("http://localhost:8080/api/ticketsOfUser")
+            .then((res) => {
+                return res.json();
+            })
+            .then((data) => {
+                console.log(data);
+                data.forEach(ticket => {
+                    const markup = `
+                        <li class="elementOfList">
+                            <p>Price: <b>${ticket.price}</b></p>
+                            <p>Status: <b>${ticket.code}</b></p>
+                            <p>Department city: <b>${ticket.departure_city}</b></p>
+                            <p>Arrival city: <b>${ticket.arrival_city}</b></p>
+                            <button id="${i}" class="passTheTicketButton">Pass the ticket</button>
+                        </li>
+                    `;
+                
+                    document.getElementById("tickets_of_this_user").insertAdjacentHTML("beforeend", markup);
+                    arrayOfFlights.push(ticket.flight_id);
+
+                    const btnPass = document.getElementById(`${i}`);
+                    if (btnPass) {
+                        btnPass.addEventListener("click", (event) => {
+                            let reqBody = `{"flight" : "${ticket.flight_id}"}`;
+                            (async () => {
+                                const deletionData = await del(reqBody);
+                                console.log(deletionData);
+                                location.reload();
+                            })();
+                        });
+                    }
+
+                    i++;
+                });
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+            
+            console.log(arrayOfFlights);
+
+            async function del(reqBody) {
+                try {
+                    const response = fetch("http://localhost:8080/api/deleteTicket", {
+                            method: "POST",
+                            cache: "no-cache",
+                            credentials: "same-origin", 
+                            headers: {
+                                "Content-Type": "application/json",
+                            }, 
+                            body: reqBody,
+                        }
+                    );
+
+                    return response;
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+        </script>
+
+        <div class="deleteAndChange">
+            <button class="deleteAccountButton" id="deleteButton">Delete Account</button>
+            <button class="deleteAccountButton" id="changeButton">Change</button>
+        </div>
+        <div class="deleteAndChangeInputs">
+            <input type="text" placeholder="Enter your username" class="inputs" id="username_input">
+            <input type="password" placeholder="Enter your Password" class="inputs" id="password">
+        </div>
+    </div>
+</body>
+</html>

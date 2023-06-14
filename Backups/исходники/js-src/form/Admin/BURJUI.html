@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../styles/style.css" rel="stylesheet">
+    <link href="../styles/stylesForAdmin.css" rel="stylesheet">
+    <title>BURJUI</title>
+</head>
+<body>
+    <div class="containerBtns">
+        <input type="submit" class="button-3" role="button" id="btnClearSearch" value="Exit" onclick="location.href='../index.html'">
+        <input type="submit" class="button-3" role="button" id="btnSearch" value="Airplanes &#9965" onclick="location.href='./AirplanesSettings.html'">
+        <input type="submit" class="button-3" role="button" id="btnClearSearch" value="Flights &#9965" onclick="location.href='./FlightsSettings.html'">
+        <input type="submit" class="button-3" role="button" id="btnClearSearch" value="Tickets &#9965" onclick="location.href='./TicketsSettings.html'">
+        <input type="submit" class="button-3" role="button" id="btnClearSearch" value="BURJUI" onclick="location.href='./BURJUI.html'">
+        <input type="submit" class="button-3" role="button" id="btnClearSearch" value="Statistics" onclick="location.href='./Stats.html'">
+        <input type="submit" class="button-3" role="button" id="btnClearSearch" value="Ticket Conc" onclick="location.href='./Concurrency.html'">
+        <!-- <input type="submit" class="button-3" role="button" id="btnClearSearch" value="Compare" onclick="location.href='./Compare.html'"> -->
+        <input type="submit" class="button-3" role="button" id="btnClearSearch" value="Clients" onclick="location.href='./Clients.html'">
+    </div>
+
+    <div style="padding-top: 250px; padding-left: 740px;" id="BUR">
+        
+    </div>
+
+    <script>
+        fetch("http://localhost:8080/api/burjui")
+        .then((res) => {
+            return res.json();
+        })
+        .then((data) => {
+            console.log(data);
+
+            console.log(data[0].buisiness_class);
+
+            let markup = `<p><b><font size="25"> ${data[0].buisiness_class} </b></p>`;
+
+            document.getElementById("BUR").insertAdjacentHTML("beforeend", markup);
+        });
+    </script>
+
+</body>
+</html>

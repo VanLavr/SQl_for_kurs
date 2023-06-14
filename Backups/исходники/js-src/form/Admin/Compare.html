@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../styles/style.css" rel="stylesheet">
+    <link href="../styles/stylesForAdmin.css" rel="stylesheet">
+    <title>Compare</title>
+</head>
+<body>
+    <div class="containerBtns">
+        <input type="submit" class="button-3" role="button" id="btnClearSearch" value="Exit" onclick="location.href='../index.html'">
+        <input type="submit" class="button-3" role="button" id="btnSearch" value="Airplanes &#9965" onclick="location.href='./AirplanesSettings.html'">
+        <input type="submit" class="button-3" role="button" id="btnClearSearch" value="Flights &#9965" onclick="location.href='./FlightsSettings.html'">
+        <input type="submit" class="button-3" role="button" id="btnClearSearch" value="Tickets &#9965" onclick="location.href='./TicketsSettings.html'">
+        <input type="submit" class="button-3" role="button" id="btnClearSearch" value="BURJUI" onclick="location.href='./BURJUI.html'">
+        <input type="submit" class="button-3" role="button" id="btnClearSearch" value="Statistics" onclick="location.href='./Stats.html'">
+        <input type="submit" class="button-3" role="button" id="btnClearSearch" value="Ticket Conc" onclick="location.href='./Concurrency.html'">
+        <!-- <input type="submit" class="button-3" role="button" id="btnClearSearch" value="Compare" onclick="location.href='./Compare.html'"> -->
+        <input type="submit" class="button-3" role="button" id="btnClearSearch" value="Clients" onclick="location.href='./Clients.html'">
+    </div>
+
+    <div style="display: inline-flex;">
+        <div class="InputsAirpCont">
+            <input type="text" placeholder="Flight id" class="InputsAirp" id="inputFlID">
+        </div>
+        <div class="ButtonsForAirpCont">
+            <button class="ButtonsForAirp" id="btnsh">Show</button>
+        </div>
+    </div>
+
+    <div style="padding-left: 500px; padding-top: 50px;">
+        <table class="styled-table" id="flightsTable">
+            <thead>
+                <tr>
+                    <th>Ticket id</th>
+                    <th>Price</th>
+                    <th>Code</th>
+                    <th>Flight</th>
+                    <th>Passanger</th>
+                </tr>
+            </thead>
+            <tbody id="bodyOfTheTable">
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        let inputData = document.getElementById("inputFlID");
+        let id;
+
+        const buttnShow = document.getElementById("btnsh");
+        if (buttnShow) {
+            buttnShow.addEventListener("click", (event) => {
+                id = getDataFromInput(event);
+                const reqBody = `{"flight" : ${id}}`;
+                console.log(reqBody);
+                (async () => {
+                    const showData = await showInfo(reqBody);
+                    let resp = await showData.json();
+                    console.log(resp);
+                    let markup;
+
+                    resp.forEach(row => {
+                        markup = `
+                            <tr>
+                                <td>${row.ticket_id}</td>    
+                                <td>${row.price}</td>    
+                                <td>${row.code}</td>    
+                                <td>${row.flight}</td>    
+                                <td>${row.passanger_id}</td>    
+                            </tr>
+                        `;
+
+                        document.getElementById("bodyOfTheTable").insertAdjacentHTML("beforeend", markup);
+                    });
+                })();
+            });
+        }
+
+        function getDataFromInput(event) {
+            event.preventDefault();
+            if (inputData) {
+                const inputDataValue = inputData.value;
+                // console.log(inputDataValue);
+                return inputDataValue;
+            } else {
+                console.log("null");
+            }
+        }
+
+        async function showInfo(reqBody) {
+            console.log("showInfo called");
+            try {
+                const response = fetch("http://localhost:8080/api/inCompare", {
+                    method: "POST",
+                    cache: "no-cache",
+                    credentials: "same-origin", 
+                    headers: {
+                        "Content-Type": "application/json",
+                    }, 
+                    body: reqBody,
+                });
+
+                return response;
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    </script>
+
+</body>
+</html>
